@@ -1,6 +1,15 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from app.core.database import init_db
 
-app = FastAPI(title="OrderFlow Backend", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
+
+
+app = FastAPI(title="OrderFlow Backend", version="1.0.0", lifespan=lifespan)
 
 
 @app.get("/")
