@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "orderflow-be"
+version = "0.1.0"
+description = "FastAPI backend for orderflow"
+authors = ["Brian <brianlih410@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.117.1"
+uvicorn = {extras = ["standard"], version = "^0.37.0"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+black = "^25.9.0"
+isort = "^6.0.1"
+mypy = "^1.18.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
