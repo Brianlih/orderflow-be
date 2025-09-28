@@ -30,3 +30,40 @@ class RestaurantService:
             Restaurant object or None if not found
         """
         return await self.mgmt.get_by_id(restaurant_id)
+    
+    async def create_restaurant(self, restaurant_data: dict) -> Restaurant:
+        """
+        Create a new restaurant.
+        
+        Args:
+            restaurant_data: Dictionary containing restaurant data
+            
+        Returns:
+            Created Restaurant object
+        """
+        return await self.mgmt.create(restaurant_data)
+    
+    async def update_restaurant(self, restaurant_id: int, update_data: dict) -> Restaurant | None:
+        """
+        Update a restaurant.
+        
+        Args:
+            restaurant_id: The restaurant ID
+            update_data: Dictionary containing update data
+            
+        Returns:
+            Updated Restaurant object or None if not found
+        """
+        return await self.mgmt.update(restaurant_id, update_data)
+    
+    async def delete_restaurant(self, restaurant_id: int) -> bool:
+        """
+        Soft delete a restaurant.
+        
+        Args:
+            restaurant_id: The restaurant ID
+            
+        Returns:
+            True if deleted, False if not found
+        """
+        return await self.mgmt.soft_delete(restaurant_id)
