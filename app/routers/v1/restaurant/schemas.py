@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -32,6 +32,17 @@ class RestaurantResponse(RestaurantBase):
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime]
+    
+    class Config:
+        from_attributes = True
+
+
+class AllergenResponse(BaseModel):
+    """Schema for allergen response."""
+    id: int
+    i18n_key: str
+    name: str
+    icon_url: Optional[str]
     
     class Config:
         from_attributes = True

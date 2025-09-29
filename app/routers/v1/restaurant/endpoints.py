@@ -4,7 +4,7 @@ from typing import List
 
 from app.configs.database import get_db
 from app.services.restaurant_service import RestaurantService
-from .schemas import RestaurantCreate, RestaurantUpdate, RestaurantResponse
+from .schemas import RestaurantCreate, RestaurantUpdate, RestaurantResponse, AllergenResponse
 
 router = APIRouter()
 
@@ -75,3 +75,20 @@ async def delete_restaurant(restaurant_id: int, db: AsyncSession = Depends(get_d
         )
     
     return None
+
+
+@router.get("/{restaurant_id}/allergens", response_model=List[AllergenResponse])
+async def get_restaurant_allergens(restaurant_id: int, db: AsyncSession = Depends(get_db)):
+    """Get all allergens associated with a restaurant's menu items."""
+    service = RestaurantService(db)
+    
+    # Check if restaurant exists
+    restaurant = await service.get_restaurant_by_id(restaurant_id)
+    if not restaurant:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Restaurant not found"
+        )
+    
+    allergens = await service.get_restaurant_allergens(restaurant_id)
+    return allergens

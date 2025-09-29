@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, distinct
 from app.dbs.restaurant.model import Restaurant
 from app.dbs.restaurant.mgmt import RestaurantMgmt
+from app.dbs.allergen.model import Allergen
+from app.dbs.menu_item.model import MenuItem
+from app.dbs.menu_item_allergen.model import MenuItemAllergen
 from typing import List
 
 
@@ -67,3 +71,26 @@ class RestaurantService:
             True if deleted, False if not found
         """
         return await self.mgmt.soft_delete(restaurant_id)
+    
+    async def get_restaurant_allergens(self, restaurant_id: int) -> List[Allergen]:
+        """
+        Get all unique allergens associated with a restaurant's menu items.
+        
+        Args:
+            restaurant_id: The restaurant ID
+            
+        Returns:
+            List of unique Allergen objects for the restaurant
+        """
+        # Query to get distinct allergens for a restaurant through menu items
+        stmt = (
+            select(distinct(Allergen.id), Allergen)
+            .join(MenuItemAllergen, Allergen.id == MenuItemAllergen.allergen_id)
+            .join(MenuItem, MenuItemAllergen.menu_item_id == MenuItem.id)
+            .where(MenuItem.restaurant_id == restaurant_id)
+            .order_by(Allergen.name)
+        )
+        
+        result = await self.mgmt.db.execute(stmt)
+        allergens = result.scalars().unique().all()
+        return list(allergens)
