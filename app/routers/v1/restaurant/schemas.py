@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
+from decimal import Decimal
 
 
 class RestaurantBase(BaseModel):
@@ -46,3 +47,37 @@ class AllergenResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+class MenuItemResponse(BaseModel):
+    """Schema for menu item response."""
+    id: int
+    name: str
+    description: Optional[str]
+    price: Decimal
+    image_url: Optional[str]
+    spice_level: int
+    is_available: bool
+    sort_order: int
+    
+    class Config:
+        from_attributes = True
+
+
+class CategoryWithMenuItemsResponse(BaseModel):
+    """Schema for category with its menu items."""
+    id: int
+    name: str
+    sort_order: int
+    is_active: bool
+    menu_items: List[MenuItemResponse] = []
+    
+    class Config:
+        from_attributes = True
+
+
+class RestaurantMenuResponse(BaseModel):
+    """Schema for restaurant menu response organized by categories."""
+    restaurant_id: int
+    restaurant_name: str
+    categories: List[CategoryWithMenuItemsResponse] = []

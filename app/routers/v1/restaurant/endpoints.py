@@ -4,7 +4,7 @@ from typing import List
 
 from app.configs.database import get_db
 from app.services.restaurant_service import RestaurantService
-from .schemas import RestaurantCreate, RestaurantUpdate, RestaurantResponse, AllergenResponse
+from .schemas import RestaurantCreate, RestaurantUpdate, RestaurantResponse, AllergenResponse, RestaurantMenuResponse
 
 router = APIRouter()
 
@@ -92,3 +92,20 @@ async def get_restaurant_allergens(restaurant_id: int, db: AsyncSession = Depend
     
     allergens = await service.get_restaurant_allergens(restaurant_id)
     return allergens
+
+
+@router.get("/{restaurant_id}/menu", response_model=RestaurantMenuResponse)
+async def get_restaurant_menu(restaurant_id: int, db: AsyncSession = Depends(get_db)):
+    """Get restaurant menu organized by categories."""
+    service = RestaurantService(db)
+    
+    # Check if restaurant exists
+    restaurant = await service.get_restaurant_by_id(restaurant_id)
+    if not restaurant:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Restaurant not found"
+        )
+    
+    menu = await service.get_restaurant_menu(restaurant_id)
+    return menu
